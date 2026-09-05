@@ -1,0 +1,400 @@
+package javaapplication23;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class JavaApplication23 {
+
+    static int currentQuestion = 0;
+    static int score = 0;
+    static int timeLeft = 15;
+    static Timer countdown;
+
+    static String[] questions = {
+        "Which class is the foundation for all Swing components?",
+        "In what size of a frame on the screen measured?",
+        "A container object in GUI programming is?",
+        "When you create a JFrame object, it is NOT automatically displayed.",
+        "How do you import all the classes in the AWT and Swing packages?",
+        "In Java, what do you name an area on the screen that has fine borders and various on the top border?",
+        "JFrame myJFrame = new JFrame(); Any command (such as the listened one) which create a new object per class is usually called a....",
+        "What is funfact about sir. Raven?"
+    };
+
+    static String[][] choices = {
+        {"A.  JPanel",   
+         "B.  JComponent",   
+         "C.  JFrame", 
+         "D.  JButton"},
+     
+        {"A.  Inches",   
+         "B.  Nits",     
+         "C.  Pixels",    
+         "D.  Dots"},      
+
+        {"A.  Another name for an array or vector.",      
+         "B.  Any class that is made up of other classes.",     
+         "C. An object like a frame that has other GUI components placed inside of it.",       
+         "D. A primitive variable that contains the actual data."},        
+
+        {"A.  True",     
+         "B.  False",    
+         "C.  both A and B", 
+         "D.  none of the above"},
+        
+        {"A.  import awt.*import swing*.",       
+         "B.  import java.awt.event.* import java.swing.*",       
+         "C.  import java.awt.*; import javax.swing.*;",        
+         "D.  IMPORT JAVA.AWTX. IMPORT JAVAX.SWING.*;"},
+        
+        {"A.  A frame",        
+         "B.  A screen",        
+         "C.  A box",         
+         "D.  A window"},
+        
+        {"A.  Parameter",     
+         "B.  Layout manager",  
+         "C.  GUI",     
+         "D.  Constructor"},
+        
+        {"A.  super pogi", 
+         "B.  pinaka mabait",   
+         "C.  laging maaga",    
+         "D.  pinaka pilosopo"}
+
+    };
+
+    static String[] answers = {"B", "C", "C", "A", "C", "A", "D", "D"};
+
+    // ── Colors ───────────────────────────────────────────────────────
+
+    static Color BG_DARK   = new Color(30,  30,  47);
+    static Color BG_PANEL  = new Color(45,  45,  68);
+    static Color BLUE      = new Color(70,  130, 230);
+    static Color GREEN     = new Color(50,  180, 100);
+    static Color RED_CLR   = new Color(210, 70,  70);
+    static Color YELLOW    = new Color(230, 180, 50);
+    static Color WHITE     = Color.WHITE;
+    static Color GRAY_TEXT = new Color(170, 170, 190);
+
+        public static void main(String[] args) {
+        showMenu();
+
+    }
+
+       static void showMenu() {
+        JFrame f = new JFrame("QUIZ GAME");
+        f.setSize(515, 500);
+        f.setLayout(null);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setResizable(false);
+        f.setLocationRelativeTo(null);
+        f.getContentPane().setBackground(BG_DARK);
+
+        JLabel title1 = new JLabel("QUIZ", SwingConstants.CENTER);
+        title1.setBounds(0, 100, 500, 60);
+        title1.setFont(new Font("Arial", Font.BOLD, 60));
+        title1.setForeground(WHITE);
+        f.add(title1);
+
+        JLabel title2 = new JLabel("TIME!", SwingConstants.CENTER);
+        title2.setBounds(0, 160, 500, 60);
+        title2.setFont(new Font("Arial", Font.BOLD, 60));
+        title2.setForeground(BLUE);
+        f.add(title2);
+
+        JLabel sub = new JLabel("8 Questions  |  15 Seconds Each", SwingConstants.CENTER);
+        sub.setBounds(0, 232, 500, 25);
+        sub.setFont(new Font("Arial", Font.PLAIN, 14));
+        sub.setForeground(GRAY_TEXT);
+        f.add(sub);
+
+        JButton play = new JButton("PLAY");
+        play.setBounds(150, 290, 200, 52);
+        play.setBackground(BLUE);
+        play.setForeground(WHITE);
+        play.setFont(new Font("Arial", Font.BOLD, 20));
+        play.setFocusPainted(false);
+        play.setBorderPainted(false);
+        play.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        f.add(play);
+
+        JButton quit = new JButton("QUIT");
+        quit.setBounds(175, 360, 150, 40);
+        quit.setBackground(BG_PANEL);
+        quit.setForeground(GRAY_TEXT);
+        quit.setFont(new Font("Arial", Font.BOLD, 14));
+        quit.setFocusPainted(false);
+        quit.setBorderPainted(false);
+        quit.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        f.add(quit);
+
+        play.addActionListener(e -> {
+            f.dispose();
+            currentQuestion = 0;
+            score = 0;
+            showQuestion();
+        });
+        quit.addActionListener(e -> System.exit(0));
+
+        f.setVisible(true);
+    }
+
+        static void showQuestion() {
+        JFrame f = new JFrame("QUIZ GAME");
+        f.setSize(515, 600);
+        f.setLayout(null);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setResizable(false);
+        f.setLocationRelativeTo(null);
+        f.getContentPane().setBackground(BG_DARK);
+
+        JPanel topBar = new JPanel(null);
+        topBar.setBounds(0, 0, 500, 55);
+        topBar.setBackground(BG_PANEL);
+        f.add(topBar);
+
+        JLabel qNumLbl = new JLabel("Q " + (currentQuestion + 1) + " of " + questions.length);
+        qNumLbl.setBounds(15, 14, 180, 25);
+        qNumLbl.setFont(new Font("Arial", Font.BOLD, 14));
+        qNumLbl.setForeground(BLUE);
+        topBar.add(qNumLbl);
+
+        JLabel scoreLbl = new JLabel("Score: " + score, SwingConstants.RIGHT);
+        scoreLbl.setBounds(300, 14, 185, 25);
+        scoreLbl.setFont(new Font("Arial", Font.BOLD, 14));
+        scoreLbl.setForeground(WHITE);
+        topBar.add(scoreLbl);
+
+        JPanel timerBg = new JPanel(null);
+        timerBg.setBounds(0, 55, 500, 8);
+        timerBg.setBackground(BG_PANEL);
+        f.add(timerBg);
+
+        JPanel timerFill = new JPanel();
+        timerFill.setBounds(0, 0, 500, 8);   // starts full
+        timerFill.setBackground(GREEN);
+        timerBg.add(timerFill);
+
+       
+        JLabel timerLbl = new JLabel("15", SwingConstants.CENTER);
+        timerLbl.setBounds(215, 70, 70, 40);
+        timerLbl.setFont(new Font("Arial", Font.BOLD, 26));
+        timerLbl.setForeground(GREEN);
+        timerLbl.setBackground(BG_PANEL);
+        timerLbl.setOpaque(true);
+        f.add(timerLbl);
+
+        JLabel timerTag = new JLabel("SEC", SwingConstants.CENTER);
+        timerTag.setBounds(215, 108, 70, 18);
+        timerTag.setFont(new Font("Arial", Font.PLAIN, 11));
+        timerTag.setForeground(GRAY_TEXT);
+        f.add(timerTag);
+       
+
+        JLabel questionBox = new JLabel(
+            "<html><div style='text-align:center'>" + questions[currentQuestion] + "</div></html>",
+            SwingConstants.CENTER);
+        questionBox.setBounds(20, 135, 460, 80);
+        questionBox.setFont(new Font("Arial", Font.BOLD, 16));
+        questionBox.setForeground(WHITE);
+        questionBox.setBackground(BG_PANEL);
+        questionBox.setOpaque(true);
+        f.add(questionBox);
+       
+        JLabel feedback = new JLabel("", SwingConstants.CENTER);
+        feedback.setBounds(20, 222, 460, 28);
+        feedback.setFont(new Font("Arial", Font.BOLD, 14));
+        f.add(feedback);
+
+      
+        String[] labels = {"A", "B", "C", "D"};
+        int[] yPos       = {260, 330, 400, 470};
+        JButton[] optBtns = new JButton[4];
+
+        for (int i = 0; i < 4; i++) {
+            JButton btn = new JButton(choices[currentQuestion][i]);
+            btn.setBounds(20, yPos[i], 460, 52);
+            btn.setBackground(BG_PANEL);
+            btn.setForeground(WHITE);
+            btn.setFont(new Font("Arial", Font.PLAIN, 15));
+            btn.setFocusPainted(false);
+            btn.setBorderPainted(false);
+            btn.setHorizontalAlignment(SwingConstants.LEFT);
+            btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            f.add(btn);
+            optBtns[i] = btn;
+
+            final String picked = labels[i];
+            final int    idx    = i;
+
+                       btn.addMouseListener(new MouseAdapter() {
+                public void mouseEntered(MouseEvent e) {
+                    if (btn.isEnabled()) btn.setBackground(new Color(60, 60, 90));
+                }
+                public void mouseExited(MouseEvent e) {
+                    if (btn.isEnabled()) btn.setBackground(BG_PANEL);
+                }
+            });
+ 
+           btn.addActionListener(e -> {
+                if (countdown != null) countdown.stop();
+                for (JButton b : optBtns) b.setEnabled(false);
+
+                boolean correct = picked.equals(answers[currentQuestion]);
+                if (correct) {
+                    score++;
+                    optBtns[idx].setBackground(GREEN);
+                    feedback.setText("Correct!");
+                    feedback.setForeground(GREEN);
+                } else {
+                    optBtns[idx].setBackground(RED_CLR);
+                    feedback.setText("Wrong!  Correct answer: " + answers[currentQuestion]);
+                    feedback.setForeground(RED_CLR);
+                    for (int j = 0; j < 4; j++) {
+                        if (labels[j].equals(answers[currentQuestion]))
+                            optBtns[j].setBackground(GREEN);
+                    }
+
+                }
+
+                Timer next = new Timer(1300, ev -> {
+                    f.dispose();
+                    currentQuestion++;
+                    if (currentQuestion < questions.length) showQuestion();
+                    else showResults();
+                });
+                next.setRepeats(false);
+                next.start();
+            });
+        }
+
+        f.setVisible(true);
+
+        timeLeft = 15;
+        countdown = new Timer(1000, null);
+        countdown.addActionListener(e -> {
+            timeLeft--;
+            timerLbl.setText(String.valueOf(timeLeft));
+
+            // Update fill bar width proportionally
+            int fillW = (int)((timeLeft / 15.0) * 500);
+            timerFill.setBounds(0, 0, fillW, 8);
+
+            // Color shifts as time runs low
+            Color barColor = timeLeft > 8 ? GREEN : timeLeft > 4 ? YELLOW : RED_CLR;
+
+            timerFill.setBackground(barColor);
+            timerLbl.setForeground(barColor);
+
+            if (timeLeft <= 0) {
+                countdown.stop();
+                for (JButton b : optBtns) b.setEnabled(false);
+                feedback.setText("Time's up!  Answer: " + answers[currentQuestion]);
+                feedback.setForeground(YELLOW);
+                for (int j = 0; j < 4; j++) {
+                    if (labels[j].equals(answers[currentQuestion]))
+                        optBtns[j].setBackground(GREEN);
+                }
+                Timer next = new Timer(1300, ev -> {
+                    f.dispose();
+                    currentQuestion++;
+                    if (currentQuestion < questions.length) showQuestion();
+                    else showResults();
+                });
+
+                next.setRepeats(false);
+                next.start();
+            }
+        });
+        countdown.start();
+    }
+
+       static void showResults() {
+        JFrame f = new JFrame("QUIZ GAME - Results");
+        f.setSize(515, 500);
+        f.setLayout(null);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setResizable(false);
+        f.setLocationRelativeTo(null);
+        f.getContentPane().setBackground(BG_DARK);
+
+        int pct = (score * 100) / questions.length;
+        String grade, gradeColor;
+        Color  gradeClr;
+        if      (pct == 100) { grade = "PERFECT!";         gradeClr = YELLOW; }
+        else if (pct >= 75)  { grade = "GREAT JOB!";       gradeClr = GREEN;  }
+        else if (pct >= 50)  { grade = "GOOD EFFORT!";     gradeClr = BLUE;   }
+        else                 { grade = "KEEP PRACTICING!"; gradeClr = RED_CLR;}
+
+        String msg = pct == 100 ? "You answered everything correctly!"
+                   : pct >= 75  ? "Almost perfect — well done!"
+                   : pct >= 50  ? "More than half right, keep it up!"
+                   :              "Practice more and try again!";
+
+        JLabel gradeLbl = new JLabel(grade, SwingConstants.CENTER);
+        gradeLbl.setBounds(0, 70, 500, 55);
+        gradeLbl.setFont(new Font("Arial", Font.BOLD, 36));
+        gradeLbl.setForeground(gradeClr);
+        f.add(gradeLbl);
+       
+        JPanel scorePanel = new JPanel(null);
+        scorePanel.setBounds(100, 145, 300, 110);
+        scorePanel.setBackground(BG_PANEL);
+        f.add(scorePanel);
+
+        JLabel scoreBig = new JLabel(score + " / " + questions.length, SwingConstants.CENTER);
+        scoreBig.setBounds(0, 15, 300, 50);
+        scoreBig.setFont(new Font("Arial", Font.BOLD, 42));
+        scoreBig.setForeground(WHITE);
+        scorePanel.add(scoreBig);
+
+        JLabel pctLbl = new JLabel(pct + "% correct", SwingConstants.CENTER);
+        pctLbl.setBounds(0, 65, 300, 25);
+        pctLbl.setFont(new Font("Arial", Font.PLAIN, 14));
+        pctLbl.setForeground(GRAY_TEXT);
+        scorePanel.add(pctLbl);
+
+        JLabel msgLbl = new JLabel(msg, SwingConstants.CENTER);
+        msgLbl.setBounds(0, 270, 500, 25);
+        msgLbl.setFont(new Font("Arial", Font.ITALIC, 14));
+        msgLbl.setForeground(GRAY_TEXT);
+        f.add(msgLbl);
+
+        JButton again = new JButton("Play Again");
+        again.setBounds(55, 320, 175, 48);
+        again.setBackground(BLUE);
+        again.setForeground(WHITE);
+        again.setFont(new Font("Arial", Font.BOLD, 15));
+        again.setFocusPainted(false);
+        again.setBorderPainted(false);
+        again.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        f.add(again);
+
+        JButton menu = new JButton("Main Menu");
+        menu.setBounds(265, 320, 175, 48);
+        menu.setBackground(BG_PANEL);
+        menu.setForeground(WHITE);
+        menu.setFont(new Font("Arial", Font.BOLD, 15));
+        menu.setFocusPainted(false);
+        menu.setBorderPainted(false);
+        menu.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        f.add(menu);
+
+        JButton quit = new JButton("Quit");
+        quit.setBounds(175, 385, 150, 40);
+        quit.setBackground(new Color(90, 30, 30));
+        quit.setForeground(RED_CLR);
+        quit.setFont(new Font("Arial", Font.BOLD, 14));
+        quit.setFocusPainted(false);
+        quit.setBorderPainted(false);
+        quit.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        f.add(quit);
+
+        again.addActionListener(e -> { f.dispose(); currentQuestion = 0; score = 0; showQuestion(); });
+        menu.addActionListener(e ->  { f.dispose(); showMenu(); });
+        quit.addActionListener(e ->  System.exit(0));
+
+        f.setVisible(true);
+    }
+}
