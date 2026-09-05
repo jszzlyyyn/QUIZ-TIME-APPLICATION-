@@ -1,4 +1,4 @@
-💻# QUIZ TIME
+# QUIZ TIME 💻
 
 A simple quiz game developed using Java Swing for our Computer Programming 2 final project.
 
